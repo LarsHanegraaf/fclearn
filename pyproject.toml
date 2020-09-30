@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "fclearn"
+version = "0.1.0"
+description = "Code written for Master Thesis"
+authors = ["Lars Hanegraaf <larshanegraaf@live.nl>"]
+repository = "https://github.com:LarsHanegraaf/fclearn.git"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
