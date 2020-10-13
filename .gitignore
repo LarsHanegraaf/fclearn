@@ -135,3 +135,4 @@ PRJ*/
 .vscode/
 
 .dataiku/
+poetry.lock
