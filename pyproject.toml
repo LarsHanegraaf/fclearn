@@ -31,6 +31,9 @@ statsmodels = "^0.12.0"
 ipykernel = "^5.3.4"
 pylint = "^2.6.0"
 debugpy = "^1.0.0-rc.2"
+pytest = "^6.1.1"
+coverage = {extras = ["toml"], version = "^5.3"}
+pytest-cov = "^2.10.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
