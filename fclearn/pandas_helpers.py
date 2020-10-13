@@ -1,16 +1,22 @@
+"""Helper functions for Pandas DataFrames with multiple time series."""
+
 import numpy as np
 import pandas as pd
 
 
 def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
-    """
-    Cumulative counts subsequent occurrences if the expression evaluate True.
-    Resets the count if it is False.
+    """Cumulative counts subsequent occurrences.
 
-    :param series: Series to evaluate
-    :param count_if: either 'eq' -> equals or 'ne' -> not equals
-    :param value: Value to compare
-    :return: cumcount series: the series with the cumulative count
+    Counts is True, resets when false
+
+    Args:
+        series (pd.Series): Series to evaluate
+        count_if (str): either 'eq' -> equals or 'ne' -> not equals
+        value (undefined): Value to compare
+
+    Returns:
+        pd.Series
+
     """
     if count_if == "eq":
         to_count = (series == value).astype("int")
@@ -29,15 +35,19 @@ def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
 
 
 def cumsum(series_to_sum: pd.Series, series_to_index: pd.Series, cumsum_if: str, value):
-    """
-    Cumulative sum subsequent occurrences if the expression evaluate True.
-    Resets the sum if it is False.
+    """Cumulative sum subsequent equal values.
 
-    :param series_to_sum: Series to evaluate
-    :param series_to_index: Series to index
-    :param cumsum_if: either 'eq' -> equals or 'ne' -> not equals
-    :param value: Value to compare
-    :return: cumcount series: the series with the cumulative count
+    Sums if expression evaluates to True, resets the sum if it is False.
+
+    Args:
+        series_to_sum (pd.Series): Series to evaluate
+        series_to_index (pd.Series): Series to index
+        cumsum_if (str): 'eq' -> equals or 'ne' -> not equals
+        value (undefined): Value to compare
+
+    Returns:
+        pd.Series
+
     """
     if cumsum_if == "eq":
         to_count = (series_to_index == value).astype("int")
@@ -59,14 +69,16 @@ def cumsum(series_to_sum: pd.Series, series_to_index: pd.Series, cumsum_if: str,
 
 
 def unnesting(df: pd.DataFrame, explode: list, axis: int) -> pd.DataFrame:
-    """
-    Unnests dataframe columns.
-    In this case used to transform a Data Range that is in cell, to rows
+    """Unnests Pandas DataFrame columns.
 
-    :param df: DataFrame to expand
-    :param explode: list of strings with the names of the columns
-    :param axis: axis to expand to
-    :return: df: Unnested dataframe
+    Args:
+        df (pd.DataFrame): DataFrame to expand
+        explode (list): list of strings with the names of the columns
+        axis (int): axis to expand to
+
+    Returns:
+        pd.DataFrame
+
     """
     if axis == 1:
         idx = df.index.repeat(df[explode[0]].str.len())
@@ -88,12 +100,15 @@ def unnesting(df: pd.DataFrame, explode: list, axis: int) -> pd.DataFrame:
 
 
 def get_time_series_combinations(df: pd.DataFrame, groupby: list) -> list:
-    """
-    Gets all combinations of the groupby and returns them in a list
+    """Gets all combinations of the groupby and returns them in a list.
 
-    :param df: DataFrame with MultiIndex
-    :param groupby: list of index names that are in the multiindex
-    :return: list: of combinations in the index
+    Args:
+        df (pd.DataFrame): DataFrame with MultiIndex
+        groupby (list): list of index names that are in the multiindex
+
+    Returns:
+        list
+
     """
     # TODO make it working for more than to items in the groupby
     skuid = df.index.get_level_values(groupby[0])
@@ -109,12 +124,15 @@ def get_time_series_combinations(df: pd.DataFrame, groupby: list) -> list:
 
 
 def get_series(df: pd.DataFrame, index_tuple: tuple) -> pd.DataFrame:
-    """
-    Return the DataFrame of one DFU bases on a tuple received from e.g. get_time_series_combinations().
+    """Return the DataFrame of one DFU based on a tuple received from e.g. get_time_series_combinations().
 
-    :param df: DataFrame to look up in
-    :param index_tuple: tuple with the series to return ('SKUID, 'ForecastGroupID')
-    :return:
+    Args:
+        df (pd.DataFrame): DataFrame to slice
+        index_tuple (tuple): tuple with the series to return ('SKUID, 'ForecastGroupID')
+
+    Returns:
+        pd.DataFrame
+
     """
     return df.loc[
         (df.index.get_level_values("SKUID") == index_tuple[0])

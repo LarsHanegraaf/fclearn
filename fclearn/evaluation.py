@@ -1,3 +1,5 @@
+"""Plotting and scoring fuctions for dataframes with multiple time series."""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,13 +11,17 @@ from fclearn import pandas_helpers
 def plot_series(
     df: pd.DataFrame, sku_dict: dict, fcp_dict: dict, x: str = None, y: str = None
 ) -> None:
-    """
-    Plot all the time series in an individual plot to inspect the results.
+    """Creates an individual plot for every time series.
 
-    :param df: DataFrame to plot
-    :param groupby: Keys that specify the DFU
-    :param columns: Columns to plot
-    :return: None
+    Args:
+        df (pd.DataFrame): DataFrame to plot
+        sku_dict (dict): Dictionary with the SKUID as key and the name as value
+        fcp_dict (dict): Dictionary with the FCP as key and the name as value
+        x (str): column name of x axis
+        y (str): column name of y axis
+
+    Returns:
+        None
     """
     groupby = ["SKUID", "ForecastGroupID"]
     for index in pandas_helpers.get_time_series_combinations(df, groupby):
@@ -30,12 +36,16 @@ def plot_series(
         plt.show()
 
 
-def mape(forecast, actual):
-    """
-    Calculates the Mean Absolute Percentage Error.
-    Forecast and actual should be Numpy arrays
+def mape(forecast: np.array, actual: np.array) -> np.array:
+    """Calculates the Mean Absolute Percentage Error (MAPE).
 
-    Error is clipped between 0 and 1
+    Args:
+        forecast (np.array): Array with the forecasted values
+        actual (np.array): Array with the actual values
+
+    Returns:
+        np.array
+
     """
     ATOL = 1e-5
     # ignore numpy divide error

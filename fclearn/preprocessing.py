@@ -1,3 +1,5 @@
+"""Preprocessing fuctions for imputing missing data and transformers for time series."""
+
 import numpy as np
 import pandas as pd
 
@@ -10,14 +12,19 @@ def extrapolate_promotions(
     min_promo_duration: int = 7,
     min_load_in_duration: int = 13,
 ) -> pd.DataFrame:
-    """
-    Extrapolates promotions of the demand dataframe using standard parameters.
+    """Extrapolates promotions of the demand dataframe using standard parameters.
 
-    :param rows_to_extrapolate: Dataframe with the rows that have missing promo information
-    :param groupby: parameter used to group DFU's
-    :param min_promo_duration: The duration of the promotional period that should be used. This duration is placed on the end of the load in window
-    :param min_load_in_duration: Minimum length of every load in that gets extrapolated
-    :return: df: dataframe with the extrapolated promo values
+    Returns the extrapolated DataFrame.
+
+    Args:
+        rows_to_extrapolate (pd.DataFrame): Dataframe with the rows that have missing promo information
+        groupby (list): parameter used to group DFU's
+        min_promo_duration (int): The duration of the promotional period that should be used. This duration is placed on the end of the load in window
+        min_load_in_duration (int): Minimum length of every load in that gets extrapolated
+
+    Returns:
+        pd.DataFrame
+
     """
     df = rows_to_extrapolate.copy()
 

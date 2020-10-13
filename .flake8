@@ -1,6 +1,7 @@
 [flake8]
-select = BLK,C,E,F,I,W
-ignore = E203,W503,E501
+select = BLK,C,E,F,I,W,D
+ignore = E203,W503,E501,DAR202
 max-complexity = 10
 application-import-names = fclearn,tests
+docstring-convention = google
 import-order-style = google
