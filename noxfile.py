@@ -3,7 +3,7 @@
 import nox
 import nox_poetry.patch  # noqa: F401
 
-locations = ["fclearn", "tests", "noxfile.py"]
+locations = ["fclearn", "tests", "noxfile.py", "docs/conf.py"]
 nox.options.sessions = "lint", "test"
 
 
@@ -32,3 +32,11 @@ def black(session):
     args = session.posargs or locations
     session.install("black")
     session.run("black", *args)
+
+
+@nox.session(python=["3.6"])
+def docs(session):
+    """Build the documentation."""
+    session.install(".")
+    session.install("sphinx", "sphinx-autodoc-typehints", "sphinx_rtd_theme")
+    session.run("sphinx-build", "docs", "docs/_build")

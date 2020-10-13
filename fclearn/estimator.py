@@ -11,23 +11,19 @@ class Naive(BaseEstimator, RegressorMixin):
     recent lag is the last column.
 
     Attributes:
-        lag (type):
-
-    Inheritance:
-        BaseEstimator:
-        RegressorMixin:
-
-    Args:
-        lag=1 (undefined):
-
+        lag (int): Lag that is taken for the Naive forecast
     """
 
     def __init__(self, lag=1):
-        """Constructor."""
+        """This estimator can be instantiated with the following parameters.
+
+        Args:
+            lag (int): Lag that should be taken for the Naive Forecast, default =1
+        """
         self.lag = lag
 
     def fit(self, X, y=None):
-        """Standard sklearn fit function.""",
+        """Standard sklearn fit function."""
         return self
 
     def predict(self, X):
@@ -43,23 +39,19 @@ class MovingAverage(BaseEstimator, RegressorMixin):
     should have column names in the form of 't-*lag number*' (e.g. 't-1').
 
     Attributes:
-        window (type):
-
-    Inheritance:
-        BaseEstimator:
-        RegressorMixin:
-
-    Args:
-        window=3 (undefined):
-
+        window (int): Amount of lags that the MA spans.
     """
 
     def __init__(self, window=3):
-        """Constructor."""
+        """This estimator can be instantiated with the following parameters.
+
+        Args:
+            window (int): Amount of lags that the MA should span.
+        """
         self.window = window
 
     def fit(self, X, y=None):
-        """Standard sklearn fit function.""",
+        """Standard sklearn fit function."""
         return self
 
     def predict(self, X):
@@ -68,26 +60,10 @@ class MovingAverage(BaseEstimator, RegressorMixin):
 
 
 class Zero(BaseEstimator, RegressorMixin):
-    """Description of Zero.
-
-    Attributes:
-        window (type):
-
-    Inheritance:
-        BaseEstimator:
-        RegressorMixin:
-
-    Args:
-        window=3 (undefined):
-
-    """
-
-    def __init__(self, window=3):
-        """Constructor."""
-        self.window = window
+    """Estimator that predicts zero."""
 
     def fit(self, X, y=None):
-        """Standard sklearn fit function.""",
+        """Standard sklearn fit function."""
         return self
 
     def predict(self, X):
