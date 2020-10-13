@@ -32,7 +32,7 @@ def mape(forecast, actual):
     
     Error is clipped between 0 and 1
     """
-    ATOL = 1
+    ATOL = 1e-5
     # ignore numpy divide error
     with np.errstate(divide='ignore'):
         res = np.abs(actual - forecast) / actual
