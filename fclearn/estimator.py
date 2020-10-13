@@ -1,5 +1,6 @@
-from sklearn.base import BaseEstimator, RegressorMixin
 import numpy as np
+from sklearn.base import BaseEstimator, RegressorMixin
+
 
 class Naive(BaseEstimator, RegressorMixin):
     """
@@ -7,6 +8,7 @@ class Naive(BaseEstimator, RegressorMixin):
     The lags should be columns that are created during preprocessing and
     should have column names in the form of 't-*lag number*' (e.g. 't-1').
     """
+
     def __init__(self, lag=1):
         self.lag = lag
 
@@ -15,7 +17,8 @@ class Naive(BaseEstimator, RegressorMixin):
 
     def predict(self, X):
         return X.iloc[:, -self.lag]
-    
+
+
 class MovingAverage(BaseEstimator, RegressorMixin):
     """
     Moving Average estimator which returns the average of lag t-1 up untill t-*window size*.
@@ -30,8 +33,9 @@ class MovingAverage(BaseEstimator, RegressorMixin):
         return self
 
     def predict(self, X):
-        return X.iloc[:, -self.window:].mean(axis=1)
-    
+        return X.iloc[:, -self.window :].mean(axis=1)
+
+
 class Zero(BaseEstimator, RegressorMixin):
     """
     Zero estimator that returns a zero forecast.

@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
@@ -12,12 +12,12 @@ def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
     :param value: Value to compare
     :return: cumcount series: the series with the cumulative count
     """
-    if count_if == 'eq':
-        to_count = (series == value).astype('int')
-    if count_if == 'ne':
-        to_count = (series != value).astype('int')
+    if count_if == "eq":
+        to_count = (series == value).astype("int")
+    if count_if == "ne":
+        to_count = (series != value).astype("int")
 
-    reset_column = ~to_count.astype('int')
+    reset_column = ~to_count.astype("int")
     reset_column = reset_column.diff()
     reset_column.fillna(0, inplace=True)
     reset_column.replace(to_replace=-1, value=0, inplace=True)
@@ -39,18 +39,18 @@ def cumsum(series_to_sum: pd.Series, series_to_index: pd.Series, cumsum_if: str,
     :param value: Value to compare
     :return: cumcount series: the series with the cumulative count
     """
-    if cumsum_if == 'eq':
-        to_count = (series_to_index == value).astype('int')
-    if cumsum_if == 'ne':
-        to_count = (series_to_index != value).astype('int')
+    if cumsum_if == "eq":
+        to_count = (series_to_index == value).astype("int")
+    if cumsum_if == "ne":
+        to_count = (series_to_index != value).astype("int")
 
-    reset_column = ~to_count.astype('int')
+    reset_column = ~to_count.astype("int")
     reset_column = reset_column.diff()
     reset_column.fillna(0, inplace=True)
     reset_column.replace(to_replace=-1, value=0, inplace=True)
 
     to_sum = to_count.copy()
-    to_sum[to_count.astype('bool')] = series_to_sum[to_count.astype('bool')]
+    to_sum[to_count.astype("bool")] = series_to_sum[to_count.astype("bool")]
     to_sum = to_sum.cumsum()
     to_subtract = to_sum * reset_column
     to_subtract = to_subtract.cummax()
@@ -70,15 +70,21 @@ def unnesting(df: pd.DataFrame, explode: list, axis: int) -> pd.DataFrame:
     """
     if axis == 1:
         idx = df.index.repeat(df[explode[0]].str.len())
-        df1 = pd.concat([
-            pd.DataFrame({x: np.concatenate(df[x].values)}) for x in explode], axis=1)
+        df1 = pd.concat(
+            [pd.DataFrame({x: np.concatenate(df[x].values)}) for x in explode], axis=1
+        )
         df1.index = idx
 
-        return df1.join(df.drop(explode, 1), how='left')
+        return df1.join(df.drop(explode, 1), how="left")
     else:
-        df1 = pd.concat([
-            pd.DataFrame(df[x].tolist(), index=df.index).add_prefix(x) for x in explode], axis=1)
-        return df1.join(df.drop(explode, 1), how='left')
+        df1 = pd.concat(
+            [
+                pd.DataFrame(df[x].tolist(), index=df.index).add_prefix(x)
+                for x in explode
+            ],
+            axis=1,
+        )
+        return df1.join(df.drop(explode, 1), how="left")
 
 
 def get_time_series_combinations(df: pd.DataFrame, groupby: list) -> list:
@@ -110,5 +116,7 @@ def get_series(df: pd.DataFrame, index_tuple: tuple) -> pd.DataFrame:
     :param index_tuple: tuple with the series to return ('SKUID, 'ForecastGroupID')
     :return:
     """
-    return df.loc[(df.index.get_level_values('SKUID') == index_tuple[0]) & (
-                df.index.get_level_values('ForecastGroupID') == index_tuple[1])]
+    return df.loc[
+        (df.index.get_level_values("SKUID") == index_tuple[0])
+        & (df.index.get_level_values("ForecastGroupID") == index_tuple[1])
+    ]

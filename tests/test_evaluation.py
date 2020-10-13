@@ -1,8 +1,9 @@
-from fclearn.evaluation import mape
 import numpy as np
 
-class TestMape:
+from fclearn.evaluation import mape
 
+
+class TestMape:
     def test_one(self):
         result = mape(np.array([2]), np.array([1]))
         assert result == np.array([1])
