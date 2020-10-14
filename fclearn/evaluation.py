@@ -16,6 +16,7 @@ def create_prediction_df(X_test, y_test, estimator, name, for_writing_to_db=Fals
         y_test (pd.DataFrame): Testing DataFrame with targets
         estimator (sklearn.BaseEstimator): Estimator to predict with
         name (string): Name of the estimator, used for column name
+        for_writing_to_db (bool): True if it should be formatted for writing to the DB.
 
     Returns:
         pd.DataFrame: DataFrame with the predictions.
