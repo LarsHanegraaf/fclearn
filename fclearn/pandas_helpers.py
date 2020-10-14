@@ -7,7 +7,7 @@ import pandas as pd
 def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
     """Cumulative counts subsequent occurrences.
 
-    Counts is True, resets when false
+    Counts if True, resets when false
 
     Args:
         series (pd.Series): Series to evaluate
@@ -31,7 +31,7 @@ def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
     to_count = to_count.cumsum()
     to_subtract = to_count * reset_column
     to_subtract = to_subtract.cummax()
-    return to_count - to_subtract
+    return (to_count - to_subtract).astype("int64")
 
 
 def cumsum(series_to_sum: pd.Series, series_to_index: pd.Series, cumsum_if: str, value):
