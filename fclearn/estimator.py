@@ -10,6 +10,10 @@ class Naive(BaseEstimator, RegressorMixin):
     Data structure of X, should only contain the lags, where the most
     recent lag is the last column.
 
+    This can be achieved by using a :class:`sklearn.pipeline.Pipeline`
+    with :class:`fclearn.preprocessing.RegressionTransformer` as the first step and
+    :class:`fclearn.preprocessing.LagsSortTransformer` as the second step.
+
     Attributes:
         lag (int): Lag that is taken for the Naive forecast
 
@@ -45,6 +49,10 @@ class MovingAverage(BaseEstimator, RegressorMixin):
     size*.
     The lags should be columns that are created during preprocessing and
     should have column names in the form of 't-*lag number*' (e.g. 't-1').
+
+    This can be achieved by using a :class:`sklearn.pipeline.Pipeline`
+    with :class:`fclearn.preprocessing.RegressionTransformer` as the first step and
+    :class:`fclearn.preprocessing.LagsSortTransformer` as the second step.
 
     Attributes:
         window (int): Amount of lags that the MA spans.
