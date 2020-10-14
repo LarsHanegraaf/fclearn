@@ -7,6 +7,27 @@ import numpy as np
 import pandas as pd
 
 
+def train_test_split(X, y, split_date):
+    """Train-Test split for time series data.
+
+    Args:
+        X (pd.DataFrame): DataFrame with the predictors,
+            should have a MultiIndex with a column Date
+        y (pd.DataFrame): DataFrame with the target,
+            should have a MultiIndex with a column Date
+        split_date (string): Date on which the test set should start
+
+    Returns:
+        X_train, X_test, y_train, y_test: With all the DataFrames
+    """
+    split_date = pd.to_datetime(split_date)
+    X_train = X.loc[X.index.get_level_values("Date") < split_date]
+    X_test = X.loc[X.index.get_level_values("Date") >= split_date]
+    y_train = y.loc[y.index.get_level_values("Date") < split_date]
+    y_test = y.loc[y.index.get_level_values("Date") >= split_date]
+    return X_train, X_test, y_train, y_test
+
+
 def create_rolling_forward_indices(
     df,
     groupby,

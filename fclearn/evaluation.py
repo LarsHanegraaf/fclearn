@@ -8,6 +8,31 @@ import seaborn as sns
 from fclearn import pandas_helpers
 
 
+def create_prediction_df(X_test, y_test, estimator, name, for_writing_to_db=False):
+    """Creates a dataframe for evaluation and writing to a database.
+
+    Args:
+        X_test (pd.DataFrame): Testing DataFrame with predictors
+        y_test (pd.DataFrame): Testing DataFrame with targets
+        estimator (sklearn.BaseEstimator): Estimator to predict with
+        name (string): Name of the estimator, used for column name
+
+    Returns:
+        pd.DataFrame: DataFrame with the predictions.
+
+    """
+    predictions = estimator.predict(X_test)
+    if for_writing_to_db:
+        y_pred = pd.DataFrame(index=y_test.index, columns=["HL", "Algorithm"])
+        y_pred["HL"] = predictions
+        y_pred["Algorithm"] = name
+        y_pred.reset_index(inplace=True)
+    else:
+        y_pred = pd.DataFrame(index=y_test.index, columns=[name])
+        y_pred[name] = predictions
+    return y_pred
+
+
 def plot_series(
     df: pd.DataFrame, sku_dict: dict, fcp_dict: dict, x: str = None, y: str = None
 ) -> None:

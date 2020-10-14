@@ -49,4 +49,4 @@ def docs(session):
         "docs/templates/",
         "-f",
     )
-    session.run("sphinx-build", "docs", "docs/_build")
+    session.run("sphinx-build", "docs", "docs/_build", "-a")

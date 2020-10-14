@@ -12,5 +12,4 @@ extensions = [
     "sphinx_rtd_theme",
     "sphinx_autodoc_typehints",
 ]
-autoclass_content = "both"
 html_theme = "sphinx_rtd_theme"

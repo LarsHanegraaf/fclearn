@@ -12,15 +12,26 @@ class Naive(BaseEstimator, RegressorMixin):
 
     Attributes:
         lag (int): Lag that is taken for the Naive forecast
+
+    Args:
+        lag (int): Lag that should be taken for the Naive Forecast, default =1
     """
 
     def __init__(self, lag=1):
-        """This estimator can be instantiated with the following parameters.
+        """Constructor."""
+        self.lag = lag
+
+    def fit(self, X, y):
+        """Fit the estimator on the data X.
 
         Args:
-            lag (int): Lag that should be taken for the Naive Forecast, default =1
+            X (pd.DataFrame): DataFrame to fit transformer on
+            y (Any): y
+
+        Returns:
+            object: **self** - Estimator instance.
         """
-        self.lag = lag
+        return self
 
     def predict(self, X):
         """Predict the next period."""
@@ -37,15 +48,26 @@ class MovingAverage(BaseEstimator, RegressorMixin):
 
     Attributes:
         window (int): Amount of lags that the MA spans.
+
+    Args:
+            window (int): Amount of lags that the MA should span.
     """
 
     def __init__(self, window=3):
-        """This estimator can be instantiated with the following parameters.
+        """Constructor."""
+        self.window = window
+
+    def fit(self, X, y):
+        """Fit the estimator on the data X.
 
         Args:
-            window (int): Amount of lags that the MA should span.
+            X (pd.DataFrame): DataFrame to fit transformer on
+            y (Any): y
+
+        Returns:
+            object: **self** - Estimator instance.
         """
-        self.window = window
+        return self
 
     def predict(self, X):
         """Predict the next period."""
@@ -54,6 +76,18 @@ class MovingAverage(BaseEstimator, RegressorMixin):
 
 class Zero(BaseEstimator, RegressorMixin):
     """Estimator that predicts zero."""
+
+    def fit(self, X, y):
+        """Fit the estimator on the data X.
+
+        Args:
+            X (pd.DataFrame): DataFrame to fit transformer on
+            y (Any): y
+
+        Returns:
+            object: **self** - Estimator instance.
+        """
+        return self
 
     def predict(self, X):
         """Predict the next period."""
