@@ -124,7 +124,7 @@ def get_time_series_combinations(df: pd.DataFrame, groupby: list) -> list:
 
 
 def get_series(df: pd.DataFrame, index_tuple: tuple) -> pd.DataFrame:
-    """Return the DataFrame of one DFU based on a tuple received from e.g. get_time_series_combinations().
+    """Return the DataFrame of one DFU based on a tuple.
 
     Args:
         df (pd.DataFrame): DataFrame to slice

@@ -22,19 +22,16 @@ class Naive(BaseEstimator, RegressorMixin):
         """
         self.lag = lag
 
-    def fit(self, X, y=None):
-        """Standard sklearn fit function."""
-        return self
-
     def predict(self, X):
-        """Standard sklearn predict fuction."""
+        """Predict the next period."""
         return X.iloc[:, -self.lag]
 
 
 class MovingAverage(BaseEstimator, RegressorMixin):
     """Estimator for a Moving Average.
 
-    Moving Average estimator which returns the average of lag t-1 up untill t-*window size*.
+    Moving Average estimator which returns the average of lag t-1 up untill t-*window '
+    size*.
     The lags should be columns that are created during preprocessing and
     should have column names in the form of 't-*lag number*' (e.g. 't-1').
 
@@ -50,22 +47,14 @@ class MovingAverage(BaseEstimator, RegressorMixin):
         """
         self.window = window
 
-    def fit(self, X, y=None):
-        """Standard sklearn fit function."""
-        return self
-
     def predict(self, X):
-        """Standard sklearn predict fuction."""
+        """Predict the next period."""
         return X.iloc[:, -self.window :].mean(axis=1)
 
 
 class Zero(BaseEstimator, RegressorMixin):
     """Estimator that predicts zero."""
 
-    def fit(self, X, y=None):
-        """Standard sklearn fit function."""
-        return self
-
     def predict(self, X):
-        """Standard sklearn predict fuction."""
+        """Predict the next period."""
         return np.zeros((X.shape[0], 1))
