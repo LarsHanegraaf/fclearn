@@ -1,4 +1,5 @@
 # fclearn
+![Tests](https://github.com/LarsHanegraaf/fclearn/workflows/Tests/badge.svg?branch=master)
 Code written for my Thesis
 
 ## Setup
