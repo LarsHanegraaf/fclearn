@@ -50,3 +50,11 @@ def docs(session):
         "-f",
     )
     session.run("sphinx-build", "docs", "docs/_build", "-a")
+
+
+@nox.session(python=["3.6"])
+def coverage(session):
+    """Upload coverage data."""
+    install_with_constraints(session, "coverage[toml]", "codecov")
+    session.run("coverage", "xml", "--fail-under=0")
+    session.run("codecov", *session.posargs)
