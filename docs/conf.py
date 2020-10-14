@@ -8,6 +8,7 @@ copyright = f"2020, {author}"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinx.ext.autosummary",
     "sphinx_rtd_theme",
     "sphinx_autodoc_typehints",
 ]

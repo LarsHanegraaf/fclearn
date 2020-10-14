@@ -5,8 +5,8 @@ The fclearn Python Project
     :hidden:
     :maxdepth: 1
 
+    source/modules
     license
-    reference
 
 Project to Forecast Time Series in an scikit-learn way.
 Used for my Master Thesis.

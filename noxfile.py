@@ -39,4 +39,7 @@ def docs(session):
     """Build the documentation."""
     session.install(".")
     session.install("sphinx", "sphinx-autodoc-typehints", "sphinx_rtd_theme")
+    session.run(
+        "sphinx-apidoc", "-o", "docs/source/", "fclearn", "-e", "-t", "docs/templates/"
+    )
     session.run("sphinx-build", "docs", "docs/_build")
