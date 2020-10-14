@@ -55,6 +55,8 @@ def docs(session):
 @nox.session(python=["3.6"])
 def coverage(session):
     """Upload coverage data."""
-    install_with_constraints(session, "coverage[toml]", "codecov")
+    session.install(".")
+    session.install("coverage[toml]")
+    session.install("codecov")
     session.run("coverage", "xml", "--fail-under=0")
     session.run("codecov", *session.posargs)
