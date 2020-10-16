@@ -7,7 +7,7 @@ import pandas as pd
 def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
     """Cumulative counts subsequent occurrences.
 
-    Counts is True, resets when false
+    Counts if True, resets when false
 
     Args:
         series (pd.Series): Series to evaluate
@@ -31,17 +31,19 @@ def cumcount(series: pd.Series, count_if: str, value) -> pd.Series:
     to_count = to_count.cumsum()
     to_subtract = to_count * reset_column
     to_subtract = to_subtract.cummax()
-    return to_count - to_subtract
+    return (to_count - to_subtract).astype("int64")
 
 
-def cumsum(series_to_sum: pd.Series, series_to_index: pd.Series, cumsum_if: str, value):
+def cumsum(
+    series_to_sum: pd.Series, series_to_evaluate: pd.Series, cumsum_if: str, value
+):
     """Cumulative sum subsequent equal values.
 
     Sums if expression evaluates to True, resets the sum if it is False.
 
     Args:
         series_to_sum (pd.Series): Series to evaluate
-        series_to_index (pd.Series): Series to index
+        series_to_evaluate (pd.Series): Series to index
         cumsum_if (str): 'eq' -> equals or 'ne' -> not equals
         value (undefined): Value to compare
 
@@ -50,9 +52,9 @@ def cumsum(series_to_sum: pd.Series, series_to_index: pd.Series, cumsum_if: str,
 
     """
     if cumsum_if == "eq":
-        to_count = (series_to_index == value).astype("int")
+        to_count = (series_to_evaluate == value).astype("int")
     if cumsum_if == "ne":
-        to_count = (series_to_index != value).astype("int")
+        to_count = (series_to_evaluate != value).astype("int")
 
     reset_column = ~to_count.astype("int")
     reset_column = reset_column.diff()

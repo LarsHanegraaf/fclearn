@@ -26,3 +26,8 @@ class TestMape:
         """Test forecast 4, actual 1, error of 100% due to clipping."""
         result = mape(np.array([4]), np.array([1]))
         assert result == np.array([1])
+
+    def test_five(self):
+        """Test forecast 4, actual 1, error of 100% due to clipping."""
+        result = mape(np.array([4, 255]), np.array([1, 255]))
+        assert np.array_equal(result, np.array([1, 0]))
