@@ -11,3 +11,17 @@ pipelines:
             - pip install poetry==1.0.10
             - pip install nox-poetry==0.5.0
             - nox
+  branches:
+    master:
+    - step:
+        name: build
+        caches:
+            - pip
+        script:
+            - pip install poetry==1.0.10
+            - poetry build
+            - pipe: atlassian/bitbucket-upload-file:0.1.2
+                variables:
+                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+                FILENAME: "dist/fclearn*.tar.gz"
