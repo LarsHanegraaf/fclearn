@@ -1,0 +1,13 @@
+image: python:3.6.8
+
+pipelines:
+  default:
+    - step:
+        name: test
+        caches:
+          - pip
+        script:
+            - pip install nox==2020.8.22
+            - pip install poetry==1.0.10
+            - pip install nox-poetry==0.5.0
+            - nox
