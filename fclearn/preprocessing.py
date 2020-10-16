@@ -1,6 +1,18 @@
 """Scikit-learn style transformer that can be used for time series problems."""
+import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin, clone
+
+from fclearn.pandas_helpers import get_time_series_combinations
+
+
+def _occurrence_value(x, order):
+    # result = collections.Counter(array).most_common(order)[order - 1][0]
+    try:
+        result = x.fillna(0).value_counts().index.values[order - 1]
+    except:  # noqa: E722
+        result = 0
+    return result
 
 
 def _create_regression_task(df, target_column, number_of_lags):
@@ -47,6 +59,353 @@ def _create_regression_task(df, target_column, number_of_lags):
 
     df.drop(columns=["weekly_grouped", "HL_sum"], inplace=True)
     return df
+
+
+class TimeSeriesTransformer(BaseEstimator, TransformerMixin):
+    """Wrapper for transformers that should be applied to indiviual series.
+
+    Transformer that applies the transformer passed to the argument to every individual
+    time serie.
+    The dataset this transformer is fit to, should already be ordere using groupby and
+    apply
+    """
+
+    def __init__(self, transformer, groupby, num_series=None):
+        """Constructor."""
+        self.transformer = transformer
+        self.groupby = groupby
+        self.num_series = num_series
+
+    def fit(self, X, y=None):
+        """Fit the transformer to the series."""
+        # Check type
+        if not isinstance(X, pd.DataFrame):
+            if self.num_series is None:
+                raise ValueError(
+                    "num_series has to be set if X is not of type DataFrame"
+                )
+        else:
+            # Calculate the size of each individual serie in the dataframe. Used for
+            # grouping the scalers
+            self.num_series = len(get_time_series_combinations(X, self.groupby))
+
+        serie_size = X.shape[0] / self.num_series
+
+        if not serie_size.is_integer():
+            raise ValueError("Size of individual series in X is not equal")
+
+        serie_size = int(serie_size)
+
+        # For each individual serie, fit a scaler and store the fitted results into
+        # self.transformers
+        self.transfomers = []
+
+        for serie_index in range(self.num_series):
+            start = 0 + serie_index * serie_size
+            stop = serie_size + serie_index * serie_size
+
+            transformer = clone(self.transformer)
+
+            if y is not None:
+
+                self.transfomers.append(transformer.fit(X[start:stop], y[start:stop]))
+
+            else:
+                self.transfomers.append(transformer.fit(X[start:stop]))
+
+        return self
+
+    def transform(self, X):
+        """Transform the series X."""
+        # Check whether input data has a shape that is a multiple of the amount of
+        # series
+        serie_size = X.shape[0] / self.num_series
+
+        if not serie_size.is_integer():
+            raise ValueError("Size of individual series in X is not equal")
+
+        serie_size = int(serie_size)
+
+        X_ = X.copy()
+
+        Xs = []
+
+        # Transform every time serie individually
+        for serie_index in range(self.num_series):
+            start = 0 + serie_index * serie_size
+            stop = serie_size + serie_index * serie_size
+
+            result = self.transfomers[serie_index].transform(X_[start:stop])
+
+            X_[start:stop] = result
+            # validate next two lines
+            Xs.append(result)
+
+        Xs = pd.concat(Xs)
+        return Xs
+        # return X_
+
+    def inverse_transform(self, X):
+        """Transform X back to it's original distribution."""
+        # Check whether input data has a shape that is a multiple of the amount of
+        # series
+        serie_size = X.shape[0] / self.num_series
+
+        if not serie_size.is_integer():
+            raise ValueError("Size of individual series in X is not equal")
+
+        serie_size = int(serie_size)
+
+        X_ = X.copy()
+
+        # Transform every time serie individually
+        for serie_index in range(self.num_series):
+            start = 0 + serie_index * serie_size
+            stop = serie_size + serie_index * serie_size
+
+            X_[start:stop] = self.transfomers[serie_index].inverse_transform(
+                X_[start:stop]
+            )
+
+        return X_
+
+
+class RowSelector(BaseEstimator, TransformerMixin):
+    """Select rows based on a criterion."""
+
+    def __init__(self, column, expression, drop_column_after_selection=True):
+        """Constructor."""
+        self.column = column
+        self.expression = expression
+        self.drop_column_after_selection = drop_column_after_selection
+
+    def fit(self, X, y=None):
+        """Fit the transformer on the data X.
+
+        Args:
+            X (pd.DataFrame): DataFrame to fit transformer on
+            y (Any): y
+
+        Returns:
+            object: **self** - Estimator instance.
+        """
+        return self
+
+    def transform(self, X):
+        """Transform DataFrame X. by selecting the relevant rows.
+
+        Args:
+            X (pd.DataFrame): DataFrame to be transformed
+
+        Returns:
+            pd.DataFrame: **X_new** - DataFrame with the selected rows.
+        """
+        assert isinstance(X, pd.DataFrame), "X should be of type DataFrame"
+        X_ = X.copy()
+        X_ = X_.loc[X_[self.column] == self.expression]
+        if self.drop_column_after_selection:
+            X_ = X_.drop(columns=[self.column])
+        return X_
+
+
+class OccurrenceTransformer(BaseEstimator, TransformerMixin):
+    """Transformer that creates a feature with the most occurring target frequency.
+
+    Preferably used in combinaten with the TimeSeriesTransformer
+
+    Args:
+        order (int): Order to create a feature for. 1 is most occurring target value
+            2 is second most occurring target.
+    """
+
+    def __init__(self, order=1):
+        """Constructor."""
+        self.order = order
+
+    def fit(self, X, y=None):
+        """Fit the transformer on the data X.
+
+        Args:
+            X (pd.DataFrame): DataFrame to fit transformer on
+            y (Any): y
+
+        Returns:
+            object: **self** - Estimator instance.
+        """
+        return self
+
+    def transform(self, X):
+        """Transform DataFrame X by creating a column with target occurrence.
+
+        Args:
+            X (pd.DataFrame): DataFrame to be transformed
+
+        Returns:
+            pd.DataFrame: **X_new** - DataFrame with occurrence of the target.
+        """
+        assert isinstance(X, pd.DataFrame), "X should be of type DataFrame"
+        assert self.order >= 1, "order should be greater or equal to 1"
+        X_ = X.copy()
+        column_name = "occurrence-{}".format(self.order)
+        X_[column_name] = X_.apply(
+            lambda x: _occurrence_value(x, self.order),
+            axis=1,
+            raw=False,
+        )
+        X_ = X_[[column_name]]
+
+        return X_
+
+
+class MovingAggregateTransformer(BaseEstimator, TransformerMixin):
+    """Transformer for aggregating multiple columns of the same row.
+
+    Note that this behaviour is different from :class:`RollingAggregateTransformer`
+    where this class aggregates over columns, wheareas the
+    RollingAggregateTransformer aggregates within the column.
+    """
+
+    def __init__(self, window, aggregate):
+        """Constructor."""
+        self.window = window
+        self.aggregate = aggregate
+
+    def fit(self, X, y=None):
+        """Fit transformer to the data."""
+        return self
+
+    def transform(self, X):
+        """Tranfrom the data."""
+        assert isinstance(X, pd.DataFrame), "X should be of type DataFrame"
+        X_ = X.iloc[:, -self.window :].agg(func=self.aggregate, axis=1)
+        X_.name = "t-{}-{}".format(self.aggregate, self.window)
+        return X_
+
+
+class RollingAggregateTransformer(BaseEstimator, TransformerMixin):
+    """Transformer that aggregates within columns.
+
+    Calculate the aggregate of days in the window. Start date is a the beginning of the
+    window window = 7 and aggregation = max return the maximum value of a column for the
+    next 7 days Can use a dict for manually setting different aggregation methods for
+    different columns.
+    """
+
+    def __init__(self, groupby, window=7, aggregation="max"):
+        """Constructor."""
+        self.groupby = groupby
+        self.window = window
+        self.aggregation = aggregation
+
+    def fit(self, X, y=None):
+        """Fit transformer to the data."""
+        return self
+
+    def transform(self, X):
+        """Transform X."""
+        assert isinstance(X, pd.DataFrame), "X should be a DataFrame"
+        X_ = X.groupby(self.groupby).apply(
+            lambda x: x.rolling(self.window)
+            .agg(self.aggregation)
+            .shift(-self.window + 1)
+        )
+        # Remove extra index levels caused by groupby
+        # X_.index = X_.index.droplevel([0, 1])
+        X_ = X_.add_suffix("_agg")
+        return X_
+
+
+class FillNaTransformer(BaseEstimator, TransformerMixin):
+    """Transformer that fills missing values."""
+
+    def fit(self, X, y=None):
+        """Fit the transformer."""
+        return self
+
+    def transform(self, X):
+        """Transform the data."""
+        X_ = X.copy()
+        for column in X_:
+            if (
+                X_[column].dtype.type == np.object_
+                or X_[column].dtype.type == "category"
+            ):
+                X_[column] = X_[column].astype("str")
+                X_[column] = X_[column].fillna("Unknown")
+            else:
+                X_[column] = X_[column].fillna(0)
+        return X_
+
+
+class GroupSelector(BaseEstimator, TransformerMixin):
+    """Transformer that selects groups of columns, based on a string.
+
+    This transformer selects groups based on wheter their columns name
+    mathces the start of the strings.
+    """
+
+    def __init__(self, groups):
+        """Constructor."""
+        self.groups = groups
+
+    def fit(self, X, y=None):
+        """Fit the transformer."""
+        return self
+
+    def transform(self, X):
+        """Transform X."""
+        assert isinstance(X, pd.DataFrame)
+        if self.groups is None:
+            return pd.DataFrame(index=X.index)
+
+        regex = ""
+
+        if len(self.groups) == 0:
+            return X
+        else:
+            for index in range(len(self.groups)):
+                if index == 0:
+                    regex += "^{}".format(self.groups[index])
+                else:
+                    regex += "|^{}".format(self.groups[index])
+
+            return X.filter(regex=regex)
+
+
+class ShiftTransformer(BaseEstimator, TransformerMixin):
+    """Shifts a DataFrame for an x amount of weeks."""
+
+    def __init__(self, shifts=[0]):
+        """Constructor."""
+        self.shifts = shifts
+
+    def fit(self, X, y=None):
+        """Fit the transformer."""
+        return self
+
+    def transform(self, X):
+        """Transform X."""
+        X_ = X.copy()
+        Xs = []
+        for shift in self.shifts:
+            if shift == 0:
+                shift_name = " t"
+            else:
+                shift_name = (
+                    " t-{}".format(np.abs(shift))
+                    if shift < 0
+                    else " t+{}".format(shift)
+                )
+            X_ = X.copy()
+            X_ = X_.shift(
+                -shift * 7
+            )  # e.g. next week carnaval (t + 1, thus index 1), needs shift -7
+            X_ = X_.add_suffix(shift_name)
+            Xs.append(X_)
+
+        Xs = pd.concat(Xs, axis=1)
+
+        return Xs
 
 
 class DateSelector(BaseEstimator, TransformerMixin):
