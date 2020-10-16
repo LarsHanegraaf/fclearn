@@ -20,7 +20,7 @@ pipelines:
         script:
             - pip install poetry==1.0.10
             - poetry build
-            - pipe: atlassian/bitbucket-upload-file:0.1.2
+            - pipe: atlassian/bitbucket-upload-file:0.3.1
               variables:
                 BITBUCKET_USERNAME: $BITBUCKET_USERNAME
                 BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
