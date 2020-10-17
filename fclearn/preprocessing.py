@@ -61,6 +61,25 @@ def _create_regression_task(df, target_column, number_of_lags):
     return df
 
 
+class LastWeekZeroTransformer(BaseEstimator, TransformerMixin):
+    """Checks whether last week was zero.
+
+    Creats a column with a boolean whether last week was zero or not.
+    """
+
+    def fit(self, X, y=None):
+        """Fit the transformer to X."""
+        return self
+
+    def transform(self, X):
+        """Transform X."""
+        assert isinstance(X, pd.DataFrame), "X should be of type dataframe"
+        X_ = X[["t-1"]]
+        X_ = X_.rename(columns={"t-1": "last_week_zero"})
+        X_["last_week_zero"] = X_["last_week_zero"].apply(lambda x: 1 if x == 0 else 0)
+        return X_
+
+
 class TimeSeriesTransformer(BaseEstimator, TransformerMixin):
     """Wrapper for transformers that should be applied to indiviual series.
 
@@ -171,7 +190,16 @@ class TimeSeriesTransformer(BaseEstimator, TransformerMixin):
 
 
 class RowSelector(BaseEstimator, TransformerMixin):
-    """Select rows based on a criterion."""
+    """Select rows based on a criterion.
+
+    The criterion is matched to be equal.
+
+    Args:
+        column (string): Column to do the look up information on.
+        expression (Any): Value to match the row on in the column.
+        drop_column_after_selection (bool): Whether the column that has been searched
+            should be deleted after filtering.
+    """
 
     def __init__(self, column, expression, drop_column_after_selection=True):
         """Constructor."""

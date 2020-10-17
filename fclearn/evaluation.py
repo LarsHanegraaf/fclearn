@@ -45,9 +45,6 @@ def plot_series(
         fcp_dict (dict): Dictionary with the FCP as key and the name as value
         x (str): column name of x axis
         y (str): column name of y axis
-
-    Returns:
-        None
     """
     groupby = ["SKUID", "ForecastGroupID"]
     for index in pandas_helpers.get_time_series_combinations(df, groupby):
