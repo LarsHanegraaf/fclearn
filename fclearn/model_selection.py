@@ -7,7 +7,9 @@ import numpy as np
 import pandas as pd
 
 
-def train_test_split(X, y, split_date):
+def train_test_split(
+    X: pd.DataFrame, y: pd.DataFrame, split_date: pd.DataFrame
+) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """Train-Test split for time series data.
 
     Args:
@@ -18,7 +20,7 @@ def train_test_split(X, y, split_date):
         split_date (string): Date on which the test set should start
 
     Returns:
-        X_train, X_test, y_train, y_test: With all the DataFrames
+        X_train, X_test, y_train, y_test
     """
     split_date = pd.to_datetime(split_date)
     X_train = X.loc[X.index.get_level_values("Date") < split_date]

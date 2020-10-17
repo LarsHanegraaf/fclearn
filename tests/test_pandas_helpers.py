@@ -58,7 +58,7 @@ class TestGetSeriesCombinations:
         """Whether unique values are returned."""
         assert get_time_series_combinations(
             demand_df, ["SKUID", "ForecastGroupID"]
-        ) == [(1, 1), (1, 2)]
+        ) == [(0, 0), (0, 1)]
 
 
 class TestGetSeries:
@@ -66,4 +66,4 @@ class TestGetSeries:
 
     def test_one(self, demand_df):
         """Shape is only one time series."""
-        assert get_series(demand_df, (1, 2)).shape == (28, 1)
+        assert get_series(demand_df, (0, 1)).shape[0] == 28

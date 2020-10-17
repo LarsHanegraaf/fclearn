@@ -1,72 +1,31 @@
 """File with test fixtures."""
 
+import numpy as np
 import pandas as pd
 import pytest
+
+
+def demand_factory(number_of_skus, number_of_customers, number_of_days):
+    """Factory function for creating a test DataFrame."""
+    rows = []
+    for sku in range(number_of_skus):
+        for customer in range(number_of_customers):
+            for day in range(number_of_days):
+                date = pd.to_datetime("2017-01-02") + np.timedelta64(day, "D")
+                # Create a cycle where demand is steady, but is different for every
+                # customer. Last column is a 'predictor' that corresponds with the
+                # day of the week.
+                rows.append([sku, customer, date, 10 + customer * 10, date.weekday])
+    return rows
 
 
 @pytest.fixture
 def demand_df():
     """Dataframe with fake demand."""
     df = pd.DataFrame(
-        data=[
-            [1, 1, "2017-01-02", 10],
-            [1, 1, "2017-01-03", 10],
-            [1, 1, "2017-01-04", 10],
-            [1, 1, "2017-01-05", 10],
-            [1, 1, "2017-01-06", 10],
-            [1, 1, "2017-01-07", 10],
-            [1, 1, "2017-01-08", 10],
-            [1, 1, "2017-01-09", 10],
-            [1, 1, "2017-01-10", 10],
-            [1, 1, "2017-01-11", 10],
-            [1, 1, "2017-01-12", 10],
-            [1, 1, "2017-01-13", 10],
-            [1, 1, "2017-01-14", 10],
-            [1, 1, "2017-01-15", 10],
-            [1, 1, "2017-01-16", 10],
-            [1, 1, "2017-01-17", 10],
-            [1, 1, "2017-01-18", 10],
-            [1, 1, "2017-01-19", 10],
-            [1, 1, "2017-01-20", 10],
-            [1, 1, "2017-01-21", 10],
-            [1, 1, "2017-01-22", 10],
-            [1, 1, "2017-01-23", 10],
-            [1, 1, "2017-01-24", 10],
-            [1, 1, "2017-01-25", 10],
-            [1, 1, "2017-01-26", 10],
-            [1, 1, "2017-01-27", 10],
-            [1, 1, "2017-01-28", 10],
-            [1, 1, "2017-01-29", 10],
-            [1, 2, "2017-01-02", 20],
-            [1, 2, "2017-01-03", 0],
-            [1, 2, "2017-01-04", 0],
-            [1, 2, "2017-01-05", 0],
-            [1, 2, "2017-01-06", 0],
-            [1, 2, "2017-01-07", 0],
-            [1, 2, "2017-01-08", 0],
-            [1, 2, "2017-01-09", 20],
-            [1, 2, "2017-01-10", 0],
-            [1, 2, "2017-01-11", 0],
-            [1, 2, "2017-01-12", 0],
-            [1, 2, "2017-01-13", 0],
-            [1, 2, "2017-01-14", 0],
-            [1, 2, "2017-01-15", 0],
-            [1, 2, "2017-01-16", 20],
-            [1, 2, "2017-01-17", 0],
-            [1, 2, "2017-01-18", 0],
-            [1, 2, "2017-01-19", 0],
-            [1, 2, "2017-01-20", 0],
-            [1, 2, "2017-01-21", 0],
-            [1, 2, "2017-01-22", 20],
-            [1, 2, "2017-01-23", 0],
-            [1, 2, "2017-01-24", 0],
-            [1, 2, "2017-01-25", 0],
-            [1, 2, "2017-01-26", 0],
-            [1, 2, "2017-01-27", 0],
-            [1, 2, "2017-01-28", 0],
-            [1, 2, "2017-01-29", 0],
-        ],
-        columns=["SKUID", "ForecastGroupID", "Date", "HL_sum"],
+        data=demand_factory(1, 2, 28),
+        columns=["SKUID", "ForecastGroupID", "Date", "HL_sum", "Predictor"],
     )
+    df["Date"] = pd.to_datetime(df["Date"])
     df = df.set_index(["SKUID", "ForecastGroupID", "Date"])
     return df

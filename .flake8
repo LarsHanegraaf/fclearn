@@ -1,6 +1,6 @@
 [flake8]
 select = BLK,C,E,F,I,W,D,DAR
-ignore = E203,W503,I101,I100
+ignore = E203,W503,I101,I100, I001
 max-complexity = 10
 max-line-length = 88
 application-import-names = fclearn,tests
