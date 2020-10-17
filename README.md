@@ -1,5 +1,6 @@
 # fclearn
-![Tests](https://github.com/LarsHanegraaf/fclearn/workflows/Tests/badge.svg?branch=master)
+[![codecov](https://codecov.io/bb/eyeon/fclearn/branch/master/graph/badge.svg?token=UVP119NXN6)](undefined)
+
 Code written for my Thesis
 
 ## Setup
