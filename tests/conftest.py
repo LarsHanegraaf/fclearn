@@ -15,7 +15,7 @@ def demand_factory(number_of_skus, number_of_customers, number_of_days):
                 # Create a cycle where demand is steady, but is different for every
                 # customer. Last column is a 'predictor' that corresponds with the
                 # day of the week.
-                rows.append([sku, customer, date, 10 + customer * 10, date.weekday])
+                rows.append([sku, customer, date, 10 + customer * 10, date.weekday()])
     return rows
 
 
