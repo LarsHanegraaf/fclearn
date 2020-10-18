@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fclearn"
-version = "0.1.0"
+version = "0.1.1"
 description = "Code written for Master Thesis"
 authors = ["Lars Hanegraaf <larshanegraaf@live.nl>"]
 repository = "https://github.com:LarsHanegraaf/fclearn.git"
@@ -30,6 +30,7 @@ sphinx-autodoc-typehints = "^1.11.1"
 sphinx-rtd-theme = "^0.5.0"
 codecov = "^2.1.10"
 flake8-import-order = "^0.18.1"
+poetry-setup = "^0.3.6"
 [tool.coverage.paths]
 source = ["fclearn", "*/site-packages"]
 

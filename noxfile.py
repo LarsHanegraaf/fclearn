@@ -60,3 +60,10 @@ def coverage(session):
     session.install("codecov")
     session.run("coverage", "xml", "--fail-under=0")
     session.run("codecov", *session.posargs)
+
+
+@nox.session(python=["3.6"])
+def build(session):
+    """Generate setup.py from pyproject.toml."""
+    session.install("poetry-setup")
+    session.run("poetry-setup")

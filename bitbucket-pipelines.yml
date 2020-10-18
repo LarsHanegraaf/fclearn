@@ -45,10 +45,10 @@ pipelines:
           caches:
               - pip
           script:
-              - pip install poetry==1.0.10
-              - poetry build
-              - pipe: atlassian/bitbucket-upload-file:0.3.1
-                variables:
-                  BITBUCKET_USERNAME: $BITBUCKET_USERNAME
-                  BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
-                  FILENAME: "dist/fclearn*.tar.gz"
+            - pip install nox==2020.8.22
+            - pip install poetry==1.0.10
+            - pip install nox-poetry==0.5.0
+            - nox --sessions build
+            - git add setup.py
+            - git commit -m "[CI] Updating setup.py to latest version."
+            - git push

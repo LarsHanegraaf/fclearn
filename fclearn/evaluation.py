@@ -8,7 +8,9 @@ import seaborn as sns
 from fclearn import pandas_helpers
 
 
-def create_prediction_df(X_test, y_test, estimator, name, for_writing_to_db=False):
+def create_prediction_df(
+    X_test, y_test, estimator, name, for_writing_to_db=False, run_id=None
+):
     """Creates a dataframe for evaluation and writing to a database.
 
     Args:
@@ -17,6 +19,9 @@ def create_prediction_df(X_test, y_test, estimator, name, for_writing_to_db=Fals
         estimator (sklearn.BaseEstimator): Estimator to predict with
         name (string): Name of the estimator, used for column name
         for_writing_to_db (bool): True if it should be formatted for writing to the DB.
+        run_id (Any): Identifier of the run that generated this forecst
+            (e.g. the VersionId of the recipe in Dataiku) is only used when
+            for_writing_to_db is True.
 
     Returns:
         pd.DataFrame: DataFrame with the predictions.
@@ -27,6 +32,7 @@ def create_prediction_df(X_test, y_test, estimator, name, for_writing_to_db=Fals
         y_pred = pd.DataFrame(index=y_test.index, columns=["HL", "Algorithm"])
         y_pred["HL"] = predictions
         y_pred["Algorithm"] = name
+        y_pred["run_id"] = run_id
         y_pred.reset_index(inplace=True)
     else:
         y_pred = pd.DataFrame(index=y_test.index, columns=[name])
