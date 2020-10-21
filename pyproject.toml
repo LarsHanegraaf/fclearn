@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fclearn"
-version = "0.1.2"
+version = "0.1.3"
 description = "Code written for Master Thesis"
 authors = ["Lars Hanegraaf <larshanegraaf@live.nl>"]
 repository = "https://github.com:LarsHanegraaf/fclearn.git"
