@@ -53,5 +53,6 @@ pipelines:
             - git commit -m "[skip ci] Updating setup.py to latest version."
             - VERSION=$(poetry version | awk  '{print $2}')
             - TAG="v$VERSION"
-            - git tag $TAG
+            - echo $TAG
+            - git tag -a $TAG -m "Update version"
             - git push
