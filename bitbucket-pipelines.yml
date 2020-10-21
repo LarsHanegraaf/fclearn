@@ -51,7 +51,7 @@ pipelines:
             - nox --sessions build
             - git add setup.py
             - git commit -m "[CI] Updating setup.py to latest version."
-            - VERSION = $(poetry version | awk  '{print $2}')
-            - TAG = "v$VERSION"
+            - VERSION=$(poetry version | awk  '{print $2}')
+            - TAG="v$VERSION"
             - git tag $TAG
             - git push
