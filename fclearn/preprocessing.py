@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin, clone
+from sklearn.preprocessing import OneHotEncoder
 
 from fclearn.pandas_helpers import get_time_series_combinations
 
@@ -672,3 +673,73 @@ class ColumnSelector(BaseEstimator, TransformerMixin):
             return X
         else:
             return X[self.columns]
+
+
+class PandasOneHotEncoder(BaseEstimator, TransformerMixin):
+    """Sklearn One Hot encoder that supports column names.
+
+    Should be used in combination with :class:`ToCategoryTransformer`.
+    """
+
+    def fit(self, X, y=None):
+        """Fit the transformer on the data X.
+
+        Args:
+            X (pd.DataFrame): DataFrame to fit transformer on
+            y (Any): y
+
+        Returns:
+            object: **self** - Estimator instance.
+        """
+        X_ = X.copy()
+        self.encoder = OneHotEncoder(sparse=False)
+        self.encoder.fit(X_)
+        return self
+
+    def transform(self, X):
+        """Transform DataFrame X.
+
+        Args:
+            X (pd.DataFrame): DataFrame to be transformed
+
+        Returns:
+            pd.DataFrame: **X_new** - DataFrame with the one hot encoded columns.
+        """
+        X_ = X.copy()
+        X_ = self.encoder.transform(X_)
+        features = X.columns
+        columns = []
+        for index in range(len(self.encoder.categories_)):
+            feature = features[index]
+            for value in self.encoder.categories_[index]:
+                columns.append("{}_{}".format(feature, value))
+
+        df = pd.DataFrame(index=X.index, data=X_, columns=columns)
+        return df
+
+
+class ToCategoryTransformer(BaseEstimator, TransformerMixin):
+    """Transformer that makes all the columns of datatype 'category'."""
+
+    def fit(self, X, y=None):
+        """Fit the transformer on the data X.
+
+        Args:
+            X (pd.DataFrame): DataFrame to fit transformer on
+            y (Any): y
+
+        Returns:
+            object: **self** - Estimator instance.
+        """
+        return self
+
+    def transform(self, X):
+        """Transform DataFrame X.
+
+        Args:
+            X (pd.DataFrame): DataFrame to be transformed
+
+        Returns:
+            pd.DataFrame: **X_new** - DataFrame with the category columns.
+        """
+        return X.astype("category")

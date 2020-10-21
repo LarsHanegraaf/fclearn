@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fclearn"
-version = "0.1.1"
+version = "0.1.2"
 description = "Code written for Master Thesis"
 authors = ["Lars Hanegraaf <larshanegraaf@live.nl>"]
 repository = "https://github.com:LarsHanegraaf/fclearn.git"
@@ -11,6 +11,7 @@ pandas="0.23"
 seaborn = "^0.11.0"
 sklearn = "^0.0"
 statsmodels = "^0.12.0"
+importlib_metadata = "^2.0.0"
 [tool.poetry.dev-dependencies]
 ipykernel = "^5.3.4"
 pylint = "^2.6.0"
