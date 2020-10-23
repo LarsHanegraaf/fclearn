@@ -161,10 +161,12 @@ def create_rolling_forward_indices(
                         start_date_index
                         + multiplier
                         + (fold * retrain_interval)
-                        + test_size,
+                        + retrain_interval,
                     )
                 )
 
+                test_indices = [x * data_augmentation_factor for x in range(test_size)]
+                test = list(np.array(test)[test_indices])
                 trains.append(train)
                 tests.append(test)
 

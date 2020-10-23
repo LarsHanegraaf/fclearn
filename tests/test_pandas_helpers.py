@@ -66,4 +66,4 @@ class TestGetSeries:
 
     def test_one(self, demand_df):
         """Shape is only one time series."""
-        assert get_series(demand_df, (0, 1)).shape[0] == 28
+        assert get_series(demand_df, (0, 1)).shape[0] == 35
