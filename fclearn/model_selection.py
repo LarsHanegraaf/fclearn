@@ -7,6 +7,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from sklearn.base import clone
 
 
 def train_test_split(
@@ -74,7 +75,8 @@ def create_rolling_forward_indices(
     start_date_ = pd.to_datetime(start_date)
     end_date_ = pd.to_datetime(end_date)
 
-    # TODO check that data is monotocally increasing
+    assert df.index.is_monotonic_increasing
+    assert df.index.is_unique
 
     # Value checking
     if df.index.get_level_values("Date").min() > pd.to_datetime(start_date_):
@@ -178,3 +180,48 @@ def create_rolling_forward_indices(
         raise NotImplementedError("Not implemented for no data augmentation")
 
     return folds
+
+
+def rolling_forecast(predictor, X, y, cv, config=None):
+    """Rolling Forecast prediction.
+
+    Use a cv object that has rolling forward indices. E.g. from
+    :function:`create_rolling_forward_indices`.
+
+    Args:
+        predictor (sklearn.estimator): Estimator that follows the sklearn
+            interface.
+        X (pd.DataFrame): predictors
+        y (pd.DataFrame): targets
+        cv (iterable): iterable the return the training and test indices of X and y.
+        config (dict): parameters that the estimator should be fit with.
+
+    Returns:
+        results (pd.DataFrame): predictions of the test set defined by cv, made with
+            the estimator.
+    """
+    index = 0
+
+    results = pd.DataFrame()
+
+    for train, test in cv:
+        index += 1
+
+        print("Iteration {}".format(index))
+
+        X_train, y_train = X.iloc[train], y.iloc[train]
+        X_test, y_test = X.iloc[test], y.iloc[test]
+
+        y_pred = y_test.copy()
+
+        predictor_ = clone(predictor)
+
+        predictor_.set_params(**config)
+
+        predictor_.fit(X_train, y_train)
+
+        y_pred.iloc[:, 0] = predictor_.predict(X_test)
+
+        results = pd.concat([results, y_pred])
+
+    return results
