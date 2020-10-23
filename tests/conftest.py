@@ -23,7 +23,7 @@ def demand_factory(number_of_skus, number_of_customers, number_of_days):
 def demand_df():
     """Dataframe with fake demand."""
     df = pd.DataFrame(
-        data=demand_factory(1, 2, 28),
+        data=demand_factory(1, 2, 35),
         columns=["SKUID", "ForecastGroupID", "Date", "HL_sum", "Predictor"],
     )
     df["Date"] = pd.to_datetime(df["Date"])

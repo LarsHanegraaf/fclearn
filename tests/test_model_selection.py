@@ -207,3 +207,25 @@ class TestRollingCV:
             print(demand_df.iloc[test])
 
             assert start_date == demand_df.iloc[first_index_test].name[2]
+
+    def test_days_between_is_equal_to_retrain_interval(self, demand_df):
+        """When retrain interval is larger than data augmentation.
+
+        Test whether the days are spaced.
+
+        Args:
+            demand_df (pd.DataFrame): dataframe file.
+        """
+        start_date = pd.to_datetime("2017-01-16")
+        cv = create_rolling_forward_indices(
+            demand_df,
+            groupby,
+            start_date,
+            start_date + np.timedelta64(13, "D"),
+            14,
+            7,
+            7,
+        )
+        train, test = cv[0]
+        assert test[1] - test[0] == 7
+        assert test[3] - test[2] == 7
