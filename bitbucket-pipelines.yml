@@ -55,4 +55,4 @@ pipelines:
             - TAG="v$VERSION"
             - echo $TAG
             - git tag -a $TAG -m "Update version"
-            - git push origin --tags
+            - git push --follow-tags
