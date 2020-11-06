@@ -892,6 +892,18 @@ toml = ">=0.7.1"
 
 [[package]]
 category = "main"
+description = "A python package for non-parametric Mann-Kendall family of trend tests."
+name = "pymannkendall"
+optional = false
+python-versions = "*"
+version = "1.4.1"
+
+[package.dependencies]
+numpy = "*"
+scipy = "*"
+
+[[package]]
+category = "main"
 description = "Python parsing module"
 name = "pyparsing"
 optional = false
@@ -1356,7 +1368,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "jaraco.test (>=3.2.0)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [metadata]
-content-hash = "4cc1d084f9a347fbf3fa37b5a290cb5ed32ba24f82073aa80fe89117fd43c7e0"
+content-hash = "d90a9a2abb16a8b8a23ac208f813e38cd40ed34a7b8e20398c938fa7322a1a08"
 lock-version = "1.0"
 python-versions = "^3.6"
 
@@ -1887,6 +1899,10 @@ pylev = [
 pylint = [
     {file = "pylint-2.6.0-py3-none-any.whl", hash = "sha256:bfe68f020f8a0fece830a22dd4d5dddb4ecc6137db04face4c3420a46a52239f"},
     {file = "pylint-2.6.0.tar.gz", hash = "sha256:bb4a908c9dadbc3aac18860550e870f58e1a02c9f2c204fdf5693d73be061210"},
+]
+pymannkendall = [
+    {file = "pymannkendall-1.4.1-py3-none-any.whl", hash = "sha256:76d348b45d28ca87c34e914bbd2671464226a7024c154ea3605241a59bf59b52"},
+    {file = "pymannkendall-1.4.1.tar.gz", hash = "sha256:1ae70e799d326beb896361d4f5410dfc867296b48c03ecdc3ebc45d680bf2906"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
