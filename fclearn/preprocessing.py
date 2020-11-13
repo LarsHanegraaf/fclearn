@@ -198,6 +198,8 @@ class TimeSeriesTransformer(BaseEstimator, TransformerMixin):
                 raise ValueError(
                     "num_series has to be set if X is not of type DataFrame"
                 )
+        elif self.num_series is not None:
+            pass
         else:
             # Calculate the size of each individual serie in the dataframe. Used for
             # grouping the scalers
@@ -251,13 +253,22 @@ class TimeSeriesTransformer(BaseEstimator, TransformerMixin):
 
             result = self.transfomers[serie_index].transform(X_[start:stop])
 
-            X_[start:stop] = result
-            # validate next two lines
-            Xs.append(result)
+            if type(result) is np.ndarray:
+                X_[
+                    start:stop
+                ] = result  # Use when using an sklearn transformer that returns numpy
+                # arrays
+            if type(result) is pd.DataFrame:
+                Xs.append(
+                    result
+                )  # Use when the transformer return a DataFrame (custom written
+                # tranfsormers)
 
-        Xs = pd.concat(Xs)
-        return Xs
-        # return X_
+        if type(result) is np.ndarray:
+            return X_
+        if type(result) is pd.DataFrame:
+            Xs = pd.concat(Xs)  # Use when new columns are created
+            return Xs  # Use when new columns are created
 
     def inverse_transform(self, X):
         """Transform X back to it's original distribution."""
