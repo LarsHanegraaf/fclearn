@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.preprocessing import OneHotEncoder
 
+from fclearn.holidays import DutchHolidays
 from fclearn.pandas_helpers import get_time_series_combinations
 
 
@@ -60,6 +61,99 @@ def _create_regression_task(df, target_column, number_of_lags):
 
     df.drop(columns=["weekly_grouped", "HL_sum"], inplace=True)
     return df
+
+
+class HolidayTransformer(BaseEstimator, TransformerMixin):
+    """Adds columns specifying whether there is an holiday or not.
+
+    Creates holidays based on the Dutch holidays.
+
+    Args:
+        indices (list): list with integers, denoting which lags should
+            be incorporated: -1 is the holidays in previous week.
+    """
+
+    def __init__(self, indices):
+        """Constructor."""
+        self.indices = indices
+
+    def generate_calendar(self, X):
+        """Create a list with holidays."""
+        start_year = X.index.get_level_values("Date").min().year - 1
+        end_year = X.index.get_level_values("Date").max().year + 1
+
+        self.holidays = pd.Series(
+            DutchHolidays(years=list(range(start_year, end_year + 1))), name="holiday"
+        )
+
+        # Split days that have multiple holidays and stack to rows
+        self.holidays = self.holidays.str.split(",", expand=True)
+        self.holidays = pd.DataFrame(self.holidays.stack())
+        self.holidays.index = self.holidays.index.droplevel(level=1)
+
+        # Pivot the rows to columns (one-hot encoding alike)
+        self.holidays.columns = ["holiday"]
+        self.holidays.holiday = self.holidays.holiday.str.strip()
+        self.holidays["count"] = 1
+        self.holidays = self.holidays.pivot(columns="holiday", values="count")
+        self.holidays.fillna(0, inplace=True)
+
+        # Type formatting
+        self.holidays = self.holidays.astype("uint8")
+        self.holidays.index = pd.to_datetime(self.holidays.index)
+
+        # Reindex to daily interval
+        date_range = pd.date_range(
+            pd.to_datetime("{}-01-01".format(start_year)),
+            pd.to_datetime("{}-12-31".format(end_year)),
+            freq="D",
+        ).to_series()
+
+        self.holidays = self.holidays.reindex(pd.Index(date_range.values))
+        self.holidays.fillna(0, inplace=True)
+
+        self.holidays.index.name = "Date"
+        return self.holidays
+
+    def fit(self, X, y=None):
+        """Fit the transformer."""
+        self.days = self.generate_calendar(X).columns
+        return self
+
+    def transform(self, X):
+        """Transform the data."""
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(self.indices, list)
+        X_ = X[[]].copy()
+        calendar = self.generate_calendar(X_)
+
+        # Drop days that not do occur in the train set
+        days_to_drop = []
+        for column in calendar.columns:
+            if column not in self.days:
+                days_to_drop.append(column)
+        calendar.drop(columns=days_to_drop, inplace=True)
+
+        # Rolling features for data augmentation
+        calendar = calendar.rolling(7).max().shift(-6)
+
+        Xs = [calendar]
+        for index in self.indices:
+            calendar_ = calendar.copy()
+            calendar_ = calendar_.shift(
+                -index * 7
+            )  # e.g. next week carnaval (t + 1, thus index 1), needs shift -7
+            calendar_ = calendar_.add_suffix(
+                " t-{}".format(np.abs(index)) if index < 0 else " t+{}".format(index)
+            )
+            Xs.append(calendar_)
+
+        calendar = pd.concat(Xs, axis=1)
+        calendar.fillna(0, inplace=True)
+        calendar = calendar.astype("uint8")
+
+        X_ = X_.join(calendar)
+        return X_
 
 
 class LastWeekZeroTransformer(BaseEstimator, TransformerMixin):
