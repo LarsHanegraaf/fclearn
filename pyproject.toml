@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fclearn"
-version = "0.1.0"
+version = "0.3.0"
 description = "Code written for Master Thesis"
 authors = ["Lars Hanegraaf <larshanegraaf@live.nl>"]
 repository = "https://github.com:LarsHanegraaf/fclearn.git"
@@ -8,10 +8,14 @@ repository = "https://github.com:LarsHanegraaf/fclearn.git"
 [tool.poetry.dependencies]
 python = "^3.6"
 pandas="0.23"
+numpy="1.19.2"
+scipy="1.5.3"
+scikit-learn="0.23.2"
+importlib_metadata = "^2.0.0"
+bayesian-optimization = "^1.2.0"
 seaborn = "^0.11.0"
-sklearn = "^0.0"
-statsmodels = "^0.12.0"
-flake8-import-order = "^0.18.1"
+pymannkendall = "^1.4.1"
+holidays = "^0.10.3"
 [tool.poetry.dev-dependencies]
 ipykernel = "^5.3.4"
 pylint = "^2.6.0"
@@ -30,6 +34,8 @@ sphinx = "^3.2.1"
 sphinx-autodoc-typehints = "^1.11.1"
 sphinx-rtd-theme = "^0.5.0"
 codecov = "^2.1.10"
+flake8-import-order = "^0.18.1"
+poetry-setup = "^0.3.6"
 [tool.coverage.paths]
 source = ["fclearn", "*/site-packages"]
 

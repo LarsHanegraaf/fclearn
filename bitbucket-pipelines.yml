@@ -1,0 +1,34 @@
+image: python:3.6.8
+
+pipelines:
+  default:
+    - step:
+        name: test and coverage
+        caches:
+          - pip
+        script:
+            - pip install nox==2020.8.22
+            - pip install poetry==1.0.10
+            - pip install nox-poetry==0.5.0
+            - nox
+            - nox --sessions test coverage -- -t $CODECOV_TOKEN
+  branches:
+    master:
+      - step:
+          name: test, coverage and build
+          caches:
+            - pip
+          script:
+              - pip install nox==2020.8.22
+              - pip install poetry==1.0.10
+              - pip install nox-poetry==0.5.0
+              - nox
+              - nox --sessions test coverage -- -t $CODECOV_TOKEN
+              - nox --sessions build
+              - git add setup.py
+              - git commit -m "[skip ci] Updating setup.py to latest version."
+              - VERSION=$(poetry version | awk  '{print $2}')
+              - TAG="v$VERSION"
+              - echo $TAG
+              - git tag -a $TAG -m "Update version"
+              - git push --follow-tags

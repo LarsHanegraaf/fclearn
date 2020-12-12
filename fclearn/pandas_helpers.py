@@ -125,11 +125,14 @@ def get_time_series_combinations(df: pd.DataFrame, groupby: list) -> list:
     return result
 
 
-def get_series(df: pd.DataFrame, index_tuple: tuple) -> pd.DataFrame:
+def get_series(
+    df: pd.DataFrame, index_tuple: tuple, groupby: list = ["SKUID", "ForecastGroupID"]
+) -> pd.DataFrame:
     """Return the DataFrame of one DFU based on a tuple.
 
     Args:
         df (pd.DataFrame): DataFrame to slice
+        groupby (list): List with index level names that form a unique DFU
         index_tuple (tuple): tuple with the series to return ('SKUID, 'ForecastGroupID')
 
     Returns:
@@ -137,6 +140,6 @@ def get_series(df: pd.DataFrame, index_tuple: tuple) -> pd.DataFrame:
 
     """
     return df.loc[
-        (df.index.get_level_values("SKUID") == index_tuple[0])
-        & (df.index.get_level_values("ForecastGroupID") == index_tuple[1])
+        (df.index.get_level_values(groupby[0]) == index_tuple[0])
+        & (df.index.get_level_values(groupby[1]) == index_tuple[1])
     ]
