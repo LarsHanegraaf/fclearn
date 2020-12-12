@@ -1,2 +1,2 @@
 sphinx-autodoc-typehints (>=1.11.1,<2.0.0)
--e git+git@github.com:LarsHanegraaf/fclearn.git
+-e git+git@github.com:LarsHanegraaf/fclearn.git#egg=fclearn
