@@ -50,7 +50,7 @@ class TestCumsum:
             pd.Series([0, 0, 0, 0, 0, 5, 0, 7, 15, 24, 0, 0], dtype="float"), result
         )
 
-
+        
 class TestGetSeriesCombinations:
     """Test get_time_series_combinations."""
 
