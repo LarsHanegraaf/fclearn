@@ -95,19 +95,6 @@ python-versions = "*"
 version = "0.2.0"
 
 [[package]]
-category = "main"
-description = "Bayesian Optimization package"
-name = "bayesian-optimization"
-optional = false
-python-versions = "*"
-version = "1.2.0"
-
-[package.dependencies]
-numpy = ">=1.9.0"
-scikit-learn = ">=0.18.0"
-scipy = ">=0.14.0"
-
-[[package]]
 category = "dev"
 description = "The uncompromising code formatter."
 name = "black"
@@ -1433,7 +1420,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "jaraco.test (>=3.2.0)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [metadata]
-content-hash = "14078195cda86e71a33ae8850f554e6bde3fa886200ea0462d268d9c517f2115"
+content-hash = "eb6d43f028d78f72c7c46457dd24007d3a21c11d2252cdb503b90ae66f4db1ce"
 lock-version = "1.0"
 python-versions = "^3.6"
 
@@ -1472,9 +1459,6 @@ babel = [
 backcall = [
     {file = "backcall-0.2.0-py2.py3-none-any.whl", hash = "sha256:fbbce6a29f263178a1f7915c1940bde0ec2b2a967566fe1c65c1dfb7422bd255"},
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
-]
-bayesian-optimization = [
-    {file = "bayesian-optimization-1.2.0.tar.gz", hash = "sha256:c2fd3af4b6cc24ee1c145295b2a900ffb9b455cad924e8185a8d5784712bc935"},
 ]
 black = [
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
