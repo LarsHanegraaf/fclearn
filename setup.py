@@ -27,7 +27,7 @@ setup(
     name='fclearn',  # Required
     # https://www.python.org/dev/peps/pep-0440/
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.4',  # Required
+    version='0.3.0',  # Required
     # https://packaging.python.org/specifications/core-metadata/#summary
     description="Code written for Master Thesis",  # Required
     # https://packaging.python.org/specifications/core-metadata/#description-optional
@@ -46,11 +46,14 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
         'pandas (==0.23)',
-        'seaborn (>=0.11.0,<0.12.0)',
-        'sklearn (>=0.0,<0.1)',
-        'statsmodels (>=0.12.0,<0.13.0)',
+        'numpy (==1.19.2)',
+        'scipy (==1.5.3)',
+        'scikit-learn (==0.23.2)',
         'importlib_metadata (>=2.0.0,<3.0.0)',
-        'dataiku-api-client (==7.0.0)',
+        'bayesian-optimization (>=1.2.0,<2.0.0)',
+        'seaborn (>=0.11.0,<0.12.0)',
+        'pymannkendall (>=1.4.1,<2.0.0)',
+        'holidays (>=0.10.3,<0.11.0)',
     ],  # Optional
     # https://setuptools.readthedocs.io/en/latest/setuptools.html#dependencies-that-aren-t-in-pypi
     dependency_links=[],  # Optional
