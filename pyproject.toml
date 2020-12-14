@@ -16,6 +16,7 @@ seaborn = "^0.11.0"
 pymannkendall = "^1.4.1"
 holidays = "^0.10.3"
 bayesian-optimization = "1.2.0"
+statsmodels = "^0.12.1"
 [tool.poetry.dev-dependencies]
 ipykernel = "^5.3.4"
 pylint = "^2.6.0"
